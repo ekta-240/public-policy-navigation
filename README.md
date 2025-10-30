@@ -7,7 +7,7 @@
 
    1. **Clone the repository**
       ```bash
-      git clone https://github.com/ekta-240/public-policy-navigation-using-ai.git
+      git clone https://github.com/ekta-240/public-policy-navigation.git
       cd public-policy-navigation-using-ai
       ```
    2. **Install dependencies**
