@@ -106,4 +106,8 @@ The synthetic education policy dataset includes:
    **Status:** Production-ready, cleaned for GitHub
    **Last Updated:** October 2025
 - Built as part of the Infosys Springboard learning program
-
+  
+<img width="1920" height="1080" alt="Screenshot (2976)" src="https://github.com/user-attachments/assets/1fbde44b-1a17-4dff-8a56-5b09a5c72ee1" />
+<img width="1920" height="1080" alt="Screenshot (2977)" src="https://github.com/user-attachments/assets/4151871a-410d-432a-94f3-c96983e715da" />
+<img width="1920" height="1080" alt="Screenshot (2978)" src="https://github.com/user-attachments/assets/66d92752-3287-4a10-84db-b42274aa5171" />
+<img width="1920" height="1080" alt="Screenshot (2979)" src="https://github.com/user-attachments/assets/f2abb77b-4703-4eba-8b49-15cdc8bd7ac3" />
