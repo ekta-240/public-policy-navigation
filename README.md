@@ -125,6 +125,7 @@ Open your browser and navigate to:
    - Example: "teacher training programs"
    - Example: "digital access in rural areas"
    - Summary of the policy
+<<<<<<< HEAD
 - [ ] Multi-language support (Hindi, regional languages)
 
    # Public Policy Navigation Using AI
@@ -180,6 +181,75 @@ Open your browser and navigate to:
       - Visit: [http://localhost:8000](http://localhost:8000)
 
    ---
+=======
+
+3. **Interpret Scores**:
+   - **0.7 - 1.0**: Highly relevant match
+   - **0.4 - 0.7**: Moderate relevance
+   - **0.0 - 0.4**: Low relevance
+
+### Example Queries
+- "early childhood education in Karnataka"
+- "STEM programs for girls"
+- "rural school infrastructure 2023"
+- "teacher recruitment Maharashtra"
+- "digital literacy initiatives"
+
+## Dataset Information
+
+The synthetic education policy dataset includes:
+- **500 policies** covering various education sectors
+- **Sectors**: Primary, Secondary, Higher Education, Vocational, Early Childhood
+- **Regions**: 10 Indian states (Karnataka, Maharashtra, Tamil Nadu, etc.)
+- **Years**: 2015-2025
+- **Fields**: 
+  - Policy ID, Title, Sector, Region, Year
+  - Target Group, Status, Funding
+  - Stakeholders, Impact Score
+  - Summary, Goals, Full Text
+
+## Model Details
+
+- **Algorithm**: TF-IDF (Term Frequency-Inverse Document Frequency)
+- **Features**: 5000 max features, bigrams (1-2 word combinations)
+- **Similarity Metric**: Cosine Similarity
+- **Training Data**: 400 policies
+- **Test Data**: 100 policies
+
+## API Endpoints
+
+### GET `/`
+- Returns the homepage with search interface
+- Response: HTML page
+
+### POST `/search`
+- Accepts form data with `query` parameter
+- Returns search results rendered in HTML
+- Parameters:
+  - `query` (string): Search query text
+
+## Development
+
+### Training New Models
+Use the Jupyter notebook `infosys_nlp.ipynb` to:
+1. Generate synthetic policy data
+2. Preprocess and split data
+3. Train TF-IDF vectorizer
+4. Save models as pickle files
+
+### Customization
+- Modify `top_k` parameter in `search_policies()` to change number of results
+- Adjust `max_features` in vectorizer for different vocabulary sizes
+- Update CSS in `index.html` for UI changes
+
+## Performance
+- Fast search: < 100ms per query
+- Pre-computed TF-IDF matrix for quick similarity calculation
+- Efficient cosine similarity computation
+
+## License
+This is an educational project for demonstrating NLP and web application development.
+>>>>>>> 91cdd305515779ef41d512932d14fbceb7b70d99
 
    ## ✨ Features
    - **Classical & Quantum Search:** Find relevant education policies using traditional TF-IDF or quantum-inspired NLP (PennyLane simulation).
