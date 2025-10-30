@@ -74,12 +74,6 @@ public-policy-navigation-using-ai/
 ```
 ```
 
-### Example Queries
-- "early childhood education in Karnataka"
-- "STEM programs for girls"
-- "rural school infrastructure 2023"
-- "teacher recruitment Maharashtra"
-- "digital literacy initiatives"
 
 ## Dataset Information
 
@@ -93,17 +87,6 @@ The synthetic education policy dataset includes:
   - Target Group, Status, Funding
   - Stakeholders, Impact Score
   - Summary, Goals, Full Text
-
-## Model Details
-
-- **Algorithm**: TF-IDF (Term Frequency-Inverse Document Frequency)
-- **Features**: 5000 max features, bigrams (1-2 word combinations)
-- **Similarity Metric**: Cosine Similarity
-- **Training Data**: 400 policies
-- **Test Data**: 100 policies
-
-## License
-  MIT License
 
    ---
 
