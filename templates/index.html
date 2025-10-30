@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PolicyNav AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="/static/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -96,56 +97,92 @@
         
         .subtitle { color: rgba(255, 255, 255, 0.85); font-size: 1.2rem; font-weight: 300; }
         
+        .search-bar-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 22px 60px 22px 60px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.3rem;
+            font-family: 'Poppins', sans-serif;
+            background: #f3f4f6;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.08);
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+        .search-input:focus {
+            box-shadow: 0 8px 24px rgba(102,126,234,0.18);
+        }
+        .search-icon-inside {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            color: #7e22ce;
+            opacity: 0.7;
+        }
         .search-wrapper {
             background: rgba(255, 255, 255, 0.95);
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 60px;
-            padding: 10px;
+            padding: 10px 0;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             margin-bottom: 60px;
             animation: fadeInUp 1s ease 0.3s backwards;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            max-width: 100vw;
         }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        form {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            justify-content: center;
+            width: 100%;
         }
-        
-        form { display: flex; align-items: center; gap: 15px; }
-        .search-icon-wrapper { padding-left: 25px; display: flex; align-items: center; }
-        .search-icon { width: 24px; height: 24px; color: #667eea; }
-        
-        input[type="text"] {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 17px;
-            padding: 18px 20px;
-            background: transparent;
-            color: #1e293b;
-            font-family: 'Poppins', sans-serif;
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
         }
-        
-        input[type="text"]::placeholder { color: #94a3b8; }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .classical-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             color: white;
             border: none;
-            padding: 18px 40px;
+            padding: 18px 30px;
             border-radius: 50px;
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
             font-family: 'Poppins', sans-serif;
         }
-        
-        button:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6); }
-        button:active { transform: translateY(0); }
+        .classical-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(79, 70, 229, 0.6); }
+        .classical-btn:active { transform: translateY(0); }
+        .quantum-btn {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+            font-family: 'Poppins', sans-serif;
+        }
+        .quantum-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(5, 150, 105, 0.6); }
+        .quantum-btn:active { transform: translateY(0); }
         
         .results-container {
             display: grid;
@@ -267,6 +304,20 @@
             input[type="text"] { padding: 15px; }
             button { width: 100%; padding: 15px; }
         }
+        
+        .graphs-container { margin-top: 60px; }
+        .graphs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; }
+        .graph-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .graph-card h3 { text-align: center; color: #1e293b; margin-bottom: 20px; font-size: 1.3rem; }
+        .graph-card canvas { width: 100% !important; height: 300px !important; }
     </style>
 </head>
 <body>
@@ -304,14 +355,17 @@
         
         <div class="search-wrapper">
             <form method="post" action="/search">
-                <div class="search-icon-wrapper">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <div class="search-bar-container">
+                    <svg class="search-icon-inside" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
+                    <input type="text" name="query" class="search-input" placeholder="Search for education policies..." value="{% if query %}{{ query }}{% endif %}" required>
                 </div>
-                <input type="text" name="query" placeholder="Search for education policies..." value="{% if query %}{{ query }}{% endif %}" required>
-                <button type="submit">Search</button>
+                <div class="button-group">
+                    <button type="submit" name="search_type" value="classical" class="classical-btn">Classical Search</button>
+                    <button type="submit" name="search_type" value="quantum" class="quantum-btn">Quantum Search</button>
+                </div>
             </form>
         </div>
         
@@ -373,22 +427,6 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">
-                            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="url(#grad4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <defs>
-                                    <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 6v6l4 2"></path>
-                            </svg>
-                            Status
-                        </span>
-                        <span class="info-value">{{ r.status }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">
                             <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="url(#grad5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <defs>
                                     <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -418,7 +456,113 @@
             </div>
             {% endif %}
         {% endif %}
+        
+        {% if graphs %}
+        <div class="graphs-container">
+            <h2 style="text-align: center; color: white; margin: 40px 0 20px; font-size: 2rem;">Quantum Search Visualizations</h2>
+            <div class="graphs-row">
+                <div class="graph-card">
+                    <h3>Relevance Score Distribution</h3>
+                    <canvas id="scoreChart" width="400" height="300"></canvas>
+                </div>
+                <div class="graph-card">
+                    <h3>Policy Year Distribution</h3>
+                    <canvas id="yearChart" width="400" height="300"></canvas>
+                </div>
+                <div class="graph-card">
+                    <h3>Region-wise Policy Distribution</h3>
+                    <canvas id="regionChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
+    
+    {% if graphs %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Relevance Score Distribution - Bar chart
+            const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+            new Chart(scoreCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Result 1', 'Result 2', 'Result 3'],
+                    datasets: [{
+                        label: 'Relevance Score',
+                        data: {{ graphs.scores | safe }},
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Policy Year Distribution - Bar chart (Full Dataset)
+            const yearLabels = Object.keys({{ year_counts | safe }});
+            const yearData = Object.values({{ year_counts | safe }});
+            const yearCtx = document.getElementById('yearChart').getContext('2d');
+            new Chart(yearCtx, {
+                type: 'bar',
+                data: {
+                    labels: yearLabels,
+                    datasets: [{
+                        label: 'Number of Policies (All Data)',
+                        data: yearData,
+                        backgroundColor: 'rgba(118, 75, 162, 0.6)',
+                        borderColor: 'rgba(118, 75, 162, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Region-wise Policy Distribution - Pie chart (Full Dataset)
+            const regionLabels = Object.keys({{ region_counts | safe }});
+            const regionData = Object.values({{ region_counts | safe }});
+            const regionCtx = document.getElementById('regionChart').getContext('2d');
+            new Chart(regionCtx, {
+                type: 'pie',
+                data: {
+                    labels: regionLabels,
+                    datasets: [{
+                        label: 'Number of Policies (All Data)',
+                        data: regionData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 205, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+            });
+        });
+    </script>
+    {% endif %}
     
 </body>
 </html>
