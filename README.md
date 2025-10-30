@@ -100,7 +100,7 @@ The synthetic education policy dataset includes:
 
    ---
 
-   ---
+
 
    **Repository:** [public-policy-navigation-using-ai](https://github.com/ekta-240/public-policy-navigation)
    **Status:** Production-ready, cleaned for GitHub
