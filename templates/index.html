@@ -445,6 +445,22 @@
                             {{ r.score }}
                         </span>
                     </div>
+                    <div class="info-row">
+                        <span class="info-label">
+                            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="url(#grad6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <defs>
+                                    <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                <text x="12" y="16" text-anchor="middle" font-size="10" fill="#764ba2">S</text>
+                            </svg>
+                            Status
+                        </span>
+                        <span class="info-value">{{ r.status }}</span>
+                    </div>
                     <div class="summary-section">{{ r.summary }}</div>
                 </div>
                 {% endfor %}
@@ -457,7 +473,7 @@
             {% endif %}
         {% endif %}
         
-        {% if graphs %}
+        {% if graphs and search_type == 'quantum' %}
         <div class="graphs-container">
             <h2 style="text-align: center; color: white; margin: 40px 0 20px; font-size: 2rem;">Quantum Search Visualizations</h2>
             <div class="graphs-row">
@@ -478,18 +494,20 @@
         {% endif %}
     </div>
     
-    {% if graphs %}
+    {% if graphs and search_type == 'quantum' %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Relevance Score Distribution - Bar chart
+            // Relevance Score Distribution - Bar chart (search results only)
+            const scores = JSON.parse('{{ graphs.scores | tojson | safe }}');
+            const scoreLabels = scores.map((_, i) => `Result ${i+1}`);
             const scoreCtx = document.getElementById('scoreChart').getContext('2d');
             new Chart(scoreCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Result 1', 'Result 2', 'Result 3'],
+                    labels: scoreLabels,
                     datasets: [{
                         label: 'Relevance Score',
-                        data: {{ graphs.scores | safe }},
+                        data: scores,
                         backgroundColor: 'rgba(102, 126, 234, 0.6)',
                         borderColor: 'rgba(102, 126, 234, 1)',
                         borderWidth: 1
@@ -504,16 +522,17 @@
                 }
             });
 
-            // Policy Year Distribution - Bar chart (Full Dataset)
-            const yearLabels = Object.keys({{ year_counts | safe }});
-            const yearData = Object.values({{ year_counts | safe }});
+            // Policy Year Distribution - Bar chart (search results only)
+            const yearCounts = JSON.parse('{{ graphs.years | tojson | safe }}');
+            const yearLabels = Object.keys(yearCounts);
+            const yearData = Object.values(yearCounts);
             const yearCtx = document.getElementById('yearChart').getContext('2d');
             new Chart(yearCtx, {
                 type: 'bar',
                 data: {
                     labels: yearLabels,
                     datasets: [{
-                        label: 'Number of Policies (All Data)',
+                        label: 'Number of Policies (Results)',
                         data: yearData,
                         backgroundColor: 'rgba(118, 75, 162, 0.6)',
                         borderColor: 'rgba(118, 75, 162, 1)',
@@ -529,16 +548,17 @@
                 }
             });
 
-            // Region-wise Policy Distribution - Pie chart (Full Dataset)
-            const regionLabels = Object.keys({{ region_counts | safe }});
-            const regionData = Object.values({{ region_counts | safe }});
+            // Region-wise Policy Distribution - Pie chart (search results only)
+            const regionCounts = JSON.parse('{{ graphs.regions | tojson | safe }}');
+            const regionLabels = Object.keys(regionCounts);
+            const regionData = Object.values(regionCounts);
             const regionCtx = document.getElementById('regionChart').getContext('2d');
             new Chart(regionCtx, {
                 type: 'pie',
                 data: {
                     labels: regionLabels,
                     datasets: [{
-                        label: 'Number of Policies (All Data)',
+                        label: 'Number of Policies (Results)',
                         data: regionData,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.6)',

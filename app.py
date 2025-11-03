@@ -134,7 +134,7 @@ def search_policies(query, top_k=3):
             'score': float(similarities[idx]),
             'policy_id': int(idx),
             'year': policy.get('year', ''),
-            'status': 'Unknown'
+            'status': policy.get('status', 'Unknown')
         })
     
     return results
@@ -258,16 +258,10 @@ async def search(
             for result in results
         ]
         
-        # Generate graphs for quantum search
+        # Generate graphs based on current results only
         graphs = None
-        region_counts = None
-        year_counts = None
-        if policies_df is not None:
-            region_counts = policies_df['region'].value_counts().to_dict()
-            year_counts = policies_df['year'].value_counts().sort_index().to_dict()
-        if search_type == "quantum" and results:
+        if results:
             scores = [float(r.get('score', 0)) for r in results]
-            # For quantum, still send filtered years/regions for legacy code, but also send full dataset
             years = {}
             regions = {}
             for r in results:
@@ -277,8 +271,8 @@ async def search(
                 regions[region] = regions.get(region, 0) + 1
             graphs = {
                 'scores': scores,
-                'years': year_counts,  # use full dataset
-                'regions': region_counts  # use full dataset
+                'years': years,
+                'regions': regions
             }
         
         print(f"Found {len(results)} results using {search_method}")
@@ -292,8 +286,7 @@ async def search(
                 "results": results,
                 "search_type": search_type,
                 "graphs": graphs,
-                "region_counts": region_counts,
-                "year_counts": year_counts,
+                # Removed region_counts and year_counts from context; charts use only filtered results in graphs
                 "quantum_available": QUANTUM_AVAILABLE
             }
         )

@@ -18,8 +18,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 # ============================================================================
 MODEL_PATH = "policyq1_vectorizer.pkl"
 MATRIX_PATH = "policyq1_tfidf_matrix_quantum.pkl"
-TRAIN_DATA_PATH = "education_policies100_cleaned.csv"
-FULL_DATA_PATH = "education_policies100_cleaned.csv"
+TRAIN_DATA_PATH = "education_policies.csv"
+FULL_DATA_PATH = "education_policies.csv"
 
 # ============================================================================
 # PREPROCESSING
@@ -36,31 +36,18 @@ def preprocess(df):
     """
     df = df.copy()
     
-    # Try to find available text columns (flexible column names)
-    text_cols = ["title", "Title", "summary", "Summary", "goals", "Goals", "description", "Description"]
-    available = [c for c in text_cols if c in df.columns]
-    
-    if not available:
+    # Use all string columns for NLP
+    text_cols = [c for c in df.columns if df[c].dtype == object or str(df[c].dtype).startswith('str')]
+    if not text_cols:
         raise ValueError("No text columns found in dataframe")
-    
-    # Combine available text columns
-    df["text_for_nlp"] = df[available].fillna('').agg(' '.join, axis=1)
-    
-    # Add stakeholders if available
-    if "stakeholders" in df.columns:
-        df["text_for_nlp"] = df["text_for_nlp"] + ". Stakeholders: " + df["stakeholders"].astype(str)
-    elif "Stakeholders" in df.columns:
-        df["text_for_nlp"] = df["text_for_nlp"] + ". Stakeholders: " + df["Stakeholders"].astype(str)
-    
-    # Convert to lowercase for consistency
+    df["text_for_nlp"] = df[text_cols].fillna('').agg(' '.join, axis=1)
     df["text_for_nlp"] = df["text_for_nlp"].str.lower()
-    
     return df
 
 # ============================================================================
 # TRAINING
 # ============================================================================
-def train_quantum_model(max_features=16, max_policies=50):
+def train_quantum_model(max_features=64):
     """
     Train the quantum NLP model with TF-IDF vectorization
     
@@ -78,7 +65,6 @@ def train_quantum_model(max_features=16, max_policies=50):
     try:
         # Load datasets
         print("\n1. Loading datasets...")
-        
         # Try different file names
         if os.path.exists(TRAIN_DATA_PATH):
             train_df = pd.read_csv(TRAIN_DATA_PATH)
@@ -88,16 +74,16 @@ def train_quantum_model(max_features=16, max_policies=50):
             train_df = pd.read_csv(FULL_DATA_PATH)
         full_df = pd.read_csv(FULL_DATA_PATH)
         print(f"   ✅ Loaded full dataset: {len(full_df)} policies from {FULL_DATA_PATH}")
-        
+
         # Use all policies in the dataset, do not limit by max_policies
         print(f"   ✅ Using all {len(full_df)} policies for training")
-        
+
         # Preprocess
         print("\n2. Preprocessing text data...")
         train_df = preprocess(train_df)
         full_df = preprocess(full_df)
         print("   ✅ Text preprocessing complete")
-        
+
         # Vectorize with TF-IDF
         print(f"\n3. Vectorizing with TF-IDF (max_features={max_features})...")
         vectorizer = TfidfVectorizer(
@@ -110,7 +96,7 @@ def train_quantum_model(max_features=16, max_policies=50):
         tfidf_matrix = vectorizer.transform(full_df["text_for_nlp"]).toarray()
         print(f"   ✅ TF-IDF matrix shape: {tfidf_matrix.shape}")
         print(f"   ✅ Vocabulary size: {len(vectorizer.vocabulary_)}")
-        
+
         # Save model
         print("\n4. Saving model artifacts...")
         joblib.dump(vectorizer, MODEL_PATH)
@@ -121,12 +107,11 @@ def train_quantum_model(max_features=16, max_policies=50):
         }, MATRIX_PATH)
         print(f"   ✅ Model saved to {MODEL_PATH}")
         print(f"   ✅ Matrix saved to {MATRIX_PATH}")
-        
+
         print("\n" + "=" * 60)
         print("✅ TRAINING COMPLETE")
         print("=" * 60)
         return True
-        
     except Exception as e:
         print(f"\n❌ Error during training: {e}")
         import traceback
@@ -178,20 +163,20 @@ def quantum_search(query, top_k=3):
     """
     try:
         print(f"\nQuantum Search: '{query}'")
-        
+
         # Load model artifacts
         if not os.path.exists(MODEL_PATH) or not os.path.exists(MATRIX_PATH):
             print("Model files not found. Please train the model first.")
             return []
-        
+
         vectorizer = joblib.load(MODEL_PATH)
         data = joblib.load(MATRIX_PATH)
         tfidf_matrix = data["tfidf_matrix"]
         df = data["df"]
-        n_qubits = data.get("n_qubits", tfidf_matrix.shape[1])
-        
+        n_qubits = 6  # Always use 6 qubits for amplitude encoding
+
         print(f"   Loaded model (n_qubits={n_qubits}, policies={len(df)})")
-        
+
         # Initialize quantum device
         dev = qml.device("default.qubit", wires=n_qubits)
         feature_map = create_feature_map(n_qubits)
@@ -222,45 +207,32 @@ def quantum_search(query, top_k=3):
         # Get top-k results
         top_indices = similarities.argsort()[::-1][:top_k]
         
-        # Format results
+        # Format results: use 'summary' column if present, else all string columns, and use status column if present
         results = []
         for idx in top_indices:
             row = df.iloc[idx]
-            
-            # Handle different column name variations
             title = row.get("title", row.get("Title", "Untitled Policy"))
-            description = ""
-            
-            if "summary" in row:
-                description = str(row["summary"])
-            elif "Summary" in row:
-                description = str(row["Summary"])
-            elif "description" in row:
-                description = str(row["description"])
-            elif "Description" in row:
-                description = str(row["Description"])
-            
-            if "goals" in row and pd.notna(row["goals"]):
-                description += " " + str(row["goals"])
-            elif "Goals" in row and pd.notna(row["Goals"]):
-                description += " " + str(row["Goals"])
-            
+            goals = row.get("goals", row.get("Goals", ""))
+            # Prefer the 'summary' column if present and non-empty
+            summary_val = row.get("summary", "")
+            if isinstance(summary_val, str) and summary_val.strip():
+                snippet = summary_val.strip()
+            else:
+                # Combine all string columns
+                text_cols = [c for c in df.columns if df[c].dtype == object or str(df[c].dtype).startswith('str')]
+                summary_parts = [f"{col}: {str(row[col])}" for col in text_cols]
+                snippet = " | ".join(summary_parts)
+            status_val = row.get("status", row.get("Status", ""))
             result = {
                 "title": title,
-                "summary": description.strip(),
+                "goals": goals,
+                "summary": snippet[:250] + ("..." if len(snippet) > 250 else ""),
                 "region": row.get("region", row.get("Region", "General")),
                 "score": round(float(similarities[idx]), 4),
                 "policy_id": row.get("policy_id", row.get("Policy_ID", idx)),
                 "year": row.get("year", row.get("Year", "")),
-                "status": "Unknown"
+                "status": status_val
             }
-            
-            # Add optional fields if available
-            if "year" in row:
-                result["year"] = row["year"]
-            elif "Year" in row:
-                result["year"] = row["Year"]
-            
             results.append(result)
         
         print(f"   Found {len(results)} results")
@@ -312,7 +284,7 @@ if __name__ == "__main__":
     
     # Always retrain and overwrite model files to use latest data
     print("\nTraining new quantum model with latest data...")
-    success = train_quantum_model(max_features=4, max_policies=50)
+    success = train_quantum_model(max_features=64)
     if not success:
         print("\nTraining failed. Exiting.")
         sys.exit(1)

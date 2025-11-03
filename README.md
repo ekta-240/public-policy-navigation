@@ -1,312 +1,117 @@
 # 🔎 Public Policy Navigation System using AI
 
 ## Overview
-An AI-powered web application for searching and navigating education policies using Natural Language Processing (NLP) and TF-IDF vectorization.
+This project is a modern, production-ready AI-powered web application for searching, analyzing, and visualizing education policies. It leverages both classical (TF-IDF) and quantum-inspired (PennyLane) NLP models to help users find the most relevant policies using natural language queries. The app features interactive analytics, a clean UI, and is designed for easy deployment and extension.
 
 ## 🚀 Quick Start
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/ekta-240/public-policy-navigation-using-ai.git
-cd public-policy-navigation-using-ai
+git clone https://github.com/ekta-240/public-policy-navigation.git
+cd public-policy-navigation-using-ai-
 
-# 2. Install dependencies
-pip install -r requirements.txt
+# 2. (Optional) Create and activate a virtual environment
+# python -m venv venv
+# .\venv\Scripts\activate
 
-# 3. Run the application
-uvicorn app:app --reload --port 8000
+# 3. Install dependencies
+pip install fastapi uvicorn jinja2 joblib pandas scikit-learn numpy pennylane
 
-# 4. Open in browser
-# Visit: http://localhost:8000
+# 4. Train models if needed
+python train_classical.py
+python quantum_nlp_train.py
+
+# 5. Run the application
+uvicorn app:app --reload --host 0.0.0.0 --port 5010
+
+# 6. Open in browser
+# Visit: http://localhost:5010
 ```
-
-## Features
-- 🔍 **Semantic Search**: Find relevant education policies using natural language queries
-- 📊 **TF-IDF Vectorization**: Uses trained model for accurate similarity matching
-- 🎨 **Modern UI**: Clean, responsive interface with card-based results
-- ⚡ **Fast API**: Built with FastAPI for high performance
-- 📈 **Relevance Scoring**: Shows similarity scores for each result
-- 📊 **Full Dataset Charts**: Quantum and classical charts always show year and region distributions for the entire dataset, not just filtered results.
-
-## Technology Stack
-- **Backend**: FastAPI
-- **Frontend**: HTML5, CSS3, Jinja2 Templates
-- **ML/NLP**: scikit-learn (TF-IDF Vectorizer)
-- **Data Processing**: pandas, numpy
-- **Server**: Uvicorn (ASGI server)
 
 ## Project Structure
 ```
-public-policy-navigation-using-ai/
-├── app.py                      # FastAPI application (main server)
-├── train_classical.py          # Script to train classical TF-IDF model
-├── quantum_nlp_train.py        # Script to train quantum-inspired model
-├── education_policies100_cleaned.csv # Main dataset (production)
-├── policy_vectorizer.pkl       # Trained TF-IDF vectorizer (classical)
-├── policy_tfidf_matrix.pkl     # Pre-computed TF-IDF matrix (classical)
-├── policyq1_vectorizer.pkl     # Trained TF-IDF vectorizer (quantum)
+public-policy-navigation-using-ai-/
+├── app.py                        # FastAPI app: main backend, search logic, API, UI rendering
+├── train_classical.py            # Script to train classical TF-IDF model
+├── quantum_nlp_train.py          # Script to train quantum (PennyLane) model
+├── education_policies.csv        # Main dataset (500 policies)
+├── train_policies.csv            # Training split (classical)
+├── test_policies.csv             # Test split (classical)
+├── trainq1_policies.csv          # Training split (quantum)
+├── testq1_policies.csv           # Test split (quantum)
+├── policy_vectorizer.pkl         # Trained TF-IDF vectorizer (classical)
+├── policy_tfidf_matrix.pkl       # TF-IDF matrix (classical)
+├── policyq1_vectorizer.pkl       # Trained TF-IDF vectorizer (quantum)
 ├── policyq1_tfidf_matrix_quantum.pkl # Quantum model matrix
+├── infosys_edu_quantum.ipynb     # Jupyter notebook: quantum NLP experiments
+├── infosys_nlp.ipynb             # Jupyter notebook: classical NLP experiments
 ├── static/
-│   └── chart.js                # Chart.js for frontend analytics
+│   └── chart.js                  # Chart.js for frontend analytics
 ├── templates/
-│   └── index.html              # Jinja2 HTML template for UI
-└── README.md                   # Project documentation
+│   └── index.html                # Jinja2 HTML template for UI
+├── __pycache__/                  # Python cache
+└── README.md                     # Project documentation
 ```
 
-## Installation & Setup
-
-### Prerequisites
-- Python 3.8+ (Python 3.13+ recommended)
-- pip or conda package manager
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/ekta-240/public-policy-navigation-using-ai.git
-cd public-policy-navigation-using-ai
-```
-
-### 2. Install Dependencies
-
-**Using pip:**
-```bash
-pip install fastapi uvicorn jinja2 joblib pandas scikit-learn numpy
-```
-
-**Using conda:**
-```bash
-conda install -y fastapi uvicorn jinja2 joblib pandas scikit-learn numpy
-```
-
-**Or install from requirements.txt (if available):**
-```bash
-pip install -r requirements.txt
-```
-
-
-### 3. Train or Verify Model Files
-Ensure these trained model files exist in the root directory:
-- `policy_vectorizer.pkl`, `policy_tfidf_matrix.pkl` (classical)
-- `policyq1_vectorizer.pkl`, `policyq1_tfidf_matrix_quantum.pkl` (quantum)
-
-If missing, run:
-```bash
-python train_classical.py
-python quantum_nlp_train.py
-```
-
-### 4. Run the Application
-
-**Standard method:**
-```bash
-uvicorn app:app --reload --host 0.0.0.0 --port 8000
-```
-
-**With conda environment:**
-```powershell
-conda run -p C:\Users\<username>\anaconda3 --no-capture-output python -m uvicorn app:app --reload --port 8000
-```
-
-**Alternative port (5000):**
-```bash
-uvicorn app:app --reload --port 5000
-```
-
-### 5. Access the Application
-Open your browser and navigate to:
-- **Local**: http://localhost:8000
-- **Network Access**: http://0.0.0.0:8000
-- **API Documentation**: http://localhost:8000/docs (auto-generated by FastAPI)
-
-## Usage
-
-### Basic Search Flow
-
-1. **Enter a Query**: Type your search query in the search box
-   - Example: "teacher training programs"
-   - Example: "digital access in rural areas"
-   - Summary of the policy
-<<<<<<< HEAD
-- [ ] Multi-language support (Hindi, regional languages)
-
-   # Public Policy Navigation Using AI
-
-   ## Overview
-   This project is a modern, production-ready AI-powered web application for searching, analyzing, and visualizing education policies. It leverages both classical (TF-IDF) and quantum-inspired (PennyLane) NLP models to help users find the most relevant policies using natural language queries. The app features interactive analytics, a clean UI, and is designed for easy deployment and extension.
+## ✨ Features
+- **Classical & Quantum Search:** Find relevant education policies using traditional TF-IDF or quantum-inspired NLP (PennyLane simulation).
+- **Interactive Analytics:** Visualize policy distributions by year, region, and relevance using Chart.js (for quantum search).
+- **Modern UI:** Responsive, clean interface with Jinja2 templates and custom CSS.
+- **Jupyter Notebooks:** Explore and experiment with both classical and quantum NLP approaches.
+- **Production-Ready:** Only essential code, models, and data included.
 
    ---
 
-   ## 📁 Directory Structure
 
-   ```
-   public-policy-navigation-using-ai/
-   ├── app.py                        # Main FastAPI application
-   ├── train_classical.py            # Script to train classical TF-IDF model
-   ├── quantum_nlp_train.py          # Script to train quantum-inspired model
-   ├── education_policies100_cleaned.csv # Main dataset (production)
-   ├── policy_vectorizer.pkl         # Trained TF-IDF vectorizer (classical)
-   ├── policy_tfidf_matrix.pkl       # Pre-computed TF-IDF matrix (classical)
-   ├── policyq1_vectorizer.pkl       # Trained TF-IDF vectorizer (quantum)
-   ├── policyq1_tfidf_matrix_quantum.pkl # Quantum model matrix
-   ├── static/
-   │   └── chart.js                  # Chart.js for frontend analytics
-   ├── templates/
-   │   └── index.html                # Jinja2 HTML template for UI
-   └── README.md                     # Project documentation
-   ```
+## 🛠️ Technology Stack
+- **Backend:** FastAPI, Uvicorn
+- **Frontend:** HTML5, CSS3, Jinja2, Chart.js
+- **ML/NLP:** scikit-learn (TF-IDF), PennyLane (quantum simulation)
+- **Data Processing:** pandas, numpy
 
    ---
 
-   ## 🚀 Quick Start
 
-   1. **Clone the repository**
-      ```bash
-      git clone https://github.com/ekta-240/public-policy-navigation-using-ai.git
-      cd public-policy-navigation-using-ai
-      ```
-   2. **Install dependencies**
-      ```bash
-      pip install -r requirements.txt
-      pip install pennylane
-      ```
-   3. **Train models (if needed)**
-      ```bash
-      python train_classical.py
-      python quantum_nlp_train.py
-      ```
-   4. **Run the application**
-      ```bash
-      uvicorn app:app --reload --port 8000
-      ```
-   5. **Open in browser**
-      - Visit: [http://localhost:8000](http://localhost:8000)
-
-   ---
-=======
-
-3. **Interpret Scores**:
-   - **0.7 - 1.0**: Highly relevant match
-   - **0.4 - 0.7**: Moderate relevance
-   - **0.0 - 0.4**: Low relevance
-
-### Example Queries
-- "early childhood education in Karnataka"
-- "STEM programs for girls"
-- "rural school infrastructure 2023"
-- "teacher recruitment Maharashtra"
-- "digital literacy initiatives"
-
-## Dataset Information
-
-The synthetic education policy dataset includes:
-- **500 policies** covering various education sectors
-- **Sectors**: Primary, Secondary, Higher Education, Vocational, Early Childhood
-- **Regions**: 10 Indian states (Karnataka, Maharashtra, Tamil Nadu, etc.)
-- **Years**: 2015-2025
-- **Fields**: 
-  - Policy ID, Title, Sector, Region, Year
-  - Target Group, Status, Funding
-  - Stakeholders, Impact Score
-  - Summary, Goals, Full Text
-
-## Model Details
-
-- **Algorithm**: TF-IDF (Term Frequency-Inverse Document Frequency)
-- **Features**: 5000 max features, bigrams (1-2 word combinations)
-- **Similarity Metric**: Cosine Similarity
-- **Training Data**: 400 policies
-- **Test Data**: 100 policies
-
-## API Endpoints
-
-### GET `/`
-- Returns the homepage with search interface
-- Response: HTML page
-
-### POST `/search`
-- Accepts form data with `query` parameter
-- Returns search results rendered in HTML
-- Parameters:
-  - `query` (string): Search query text
-
-## Development
-
-### Training New Models
-Use the Jupyter notebook `infosys_nlp.ipynb` to:
-1. Generate synthetic policy data
-2. Preprocess and split data
-3. Train TF-IDF vectorizer
-4. Save models as pickle files
-
-### Customization
-- Modify `top_k` parameter in `search_policies()` to change number of results
-- Adjust `max_features` in vectorizer for different vocabulary sizes
-- Update CSS in `index.html` for UI changes
-
-## Performance
-- Fast search: < 100ms per query
-- Pre-computed TF-IDF matrix for quick similarity calculation
-- Efficient cosine similarity computation
-
-## License
-This is an educational project for demonstrating NLP and web application development.
->>>>>>> 91cdd305515779ef41d512932d14fbceb7b70d99
-
-   ## ✨ Features
-   - **Classical & Quantum Search:** Find relevant education policies using traditional TF-IDF or quantum-inspired NLP (PennyLane simulation).
-   - **Interactive Analytics:** Visualize policy distributions by year, region, and relevance using Chart.js.
-   - **Modern UI:** Responsive, clean interface with Jinja2 templates and custom CSS.
-   - **Production-Ready:** All unnecessary files removed; only essential code, models, and data included.
+## 📊 Usage
+1. **Enter a Query:** Type your search (e.g., "girls education policy", "teacher training", "digital access in rural areas").
+2. **Choose Search Type:** Select "Classical" or "Quantum" search.
+3. **View Results:** Top 3 most relevant policies are shown with:
+   - Title, region, year, score, and summary
+   - Interactive charts (for quantum search only)
 
    ---
 
-   ## 🛠️ Technology Stack
-   - **Backend:** FastAPI, Uvicorn
-   - **Frontend:** HTML5, CSS3, Jinja2, Chart.js
-   - **ML/NLP:** scikit-learn (TF-IDF), PennyLane (quantum simulation)
-   - **Data Processing:** pandas, numpy
+## 📦 Files & Their Purpose
+- `app.py`: Main FastAPI server, search logic, API, UI rendering
+- `train_classical.py`: Trains and saves classical TF-IDF model
+- `quantum_nlp_train.py`: Trains and saves quantum (PennyLane) model
+- `education_policies.csv`: Main dataset (500 policies)
+- `train_policies.csv`, `test_policies.csv`: Classical model train/test splits
+- `trainq1_policies.csv`, `testq1_policies.csv`: Quantum model train/test splits
+- `policy_vectorizer.pkl`, `policy_tfidf_matrix.pkl`: Classical model artifacts
+- `policyq1_vectorizer.pkl`, `policyq1_tfidf_matrix_quantum.pkl`: Quantum model artifacts
+- `infosys_edu_quantum.ipynb`: Jupyter notebook for quantum NLP experiments
+- `infosys_nlp.ipynb`: Jupyter notebook for classical NLP experiments
+- `static/chart.js`: Chart.js for frontend analytics
+- `templates/index.html`: Main HTML template for the UI
+- `__pycache__/`: Python bytecode cache
 
-   ---
 
-   ## 📊 Usage
-   1. **Enter a Query:** Type your search (e.g., "girls education policy", "teacher training", "digital access in rural areas").
-   2. **Choose Search Type:** Select "Classical" or "Quantum" search.
-   3. **View Results:** Top 3 most relevant policies are shown with:
-      - Title, region, year, score, and summary
-      - Highlighted keywords (e.g., "girls", "female", "women")
-      - Interactive charts (for quantum search)
+## 🧑‍💻 Contributing
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a Pull Request
 
-   ---
+---
 
-   ## 📦 Files & Their Purpose
-   - `app.py`: Main web server, handles search, loads models, serves UI.
-   - `train_classical.py`: Trains and saves classical TF-IDF model.
-   - `quantum_nlp_train.py`: Trains and saves quantum-inspired model (PennyLane simulation).
-   - `education_policies100_cleaned.csv`: Main dataset for production use.
-   - `policy_vectorizer.pkl`, `policy_tfidf_matrix.pkl`: Classical model artifacts.
-   - `policyq1_vectorizer.pkl`, `policyq1_tfidf_matrix_quantum.pkl`: Quantum model artifacts.
-   - `static/chart.js`: Chart.js library for frontend analytics.
-   - `templates/index.html`: Main HTML template for the UI.
+## 📝 License
+MIT License
 
-   ---
+---
 
-   ## 🧑‍💻 Contributing
-   1. Fork the repository
-   2. Create your feature branch (`git checkout -b feature/YourFeature`)
-   3. Commit your changes (`git commit -m 'Add your feature'`)
-   4. Push to the branch (`git push origin feature/YourFeature`)
-   5. Open a Pull Request
-
-   ---
-
-   ## 📝 License
-   MIT License
-
-   ---
-
-   **Repository:** [public-policy-navigation-using-ai](https://github.com/ekta-240/public-policy-navigation-using-ai)
-   **Status:** Production-ready, cleaned for GitHub
-   **Last Updated:** October 2025
+**Repository:** [public-policy-navigation](https://github.com/ekta-240/public-policy-navigation)
+**Status:** Production-ready, cleaned for GitHub
+**Last Updated:** November 2025
 - Built as part of the Infosys Springboard learning program
-
-### Chart Behavior
-- The Policy Year Distribution and Region-wise Policy Distribution charts always reflect the entire dataset, regardless of your search query. This ensures a consistent overview of all available policies.
