@@ -1,6 +1,5 @@
 # 🔎 Public Policy Navigation System using AI
 
-<<<<<<< HEAD
 ## Overview
 This project is a modern, production-ready AI-powered web application for searching, analyzing, and visualizing education policies. It leverages both classical (TF-IDF) and quantum-inspired (PennyLane) NLP models to help users find the most relevant policies using natural language queries. The app features interactive analytics, a clean UI, and is designed for easy deployment and extension.
 
@@ -215,4 +214,3 @@ MIT License
 <img width="1920" height="1080" alt="Screenshot (2977)" src="https://github.com/user-attachments/assets/4151871a-410d-432a-94f3-c96983e715da" />
 <img width="1920" height="1080" alt="Screenshot (2978)" src="https://github.com/user-attachments/assets/66d92752-3287-4a10-84db-b42274aa5171" />
 <img width="1920" height="1080" alt="Screenshot (2979)" src="https://github.com/user-attachments/assets/f2abb77b-4703-4eba-8b49-15cdc8bd7ac3" />
->>>>>>> 6c9cbf28f54c9ac68ef57e6b61eb247d492cf730
